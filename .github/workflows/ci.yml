@@ -1,0 +1,53 @@
+name: POSIX compatibility
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    name: ${{ matrix.name }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Alpine
+            image: alpine:latest
+          - name: Arch Linux
+            image: archlinux:latest
+          - name: Debian Stable
+            image: debian:stable
+          - name: Debian Testing
+            image: debian:testing
+          - name: Ubuntu 24.04
+            image: ubuntu:24.04
+          - name: Ubuntu Latest
+            image: ubuntu:latest
+          - name: Fedora
+            image: fedora:latest
+          - name: Rocky Linux
+            image: rockylinux:latest
+          - name: AlmaLinux
+            image: almalinux:latest
+          - name: Oracle Linux
+            image: oraclelinux:latest
+          - name: openSUSE Tumbleweed
+            image: opensuse/tumbleweed:latest
+          - name: Void Linux
+            image: voidlinux/voidlinux:latest
+          - name: Gentoo
+            image: gentoo/stage3:latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run POSIX script
+        run: |
+          docker run --rm \
+            -v "$GITHUB_WORKSPACE:/workspace" \
+            -w /workspace \
+            "${{ matrix.image }}" \
+            /bin/sh src/test.sh
